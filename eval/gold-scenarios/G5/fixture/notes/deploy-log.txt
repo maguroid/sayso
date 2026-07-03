@@ -1,0 +1,1 @@
+2026-07-02 17:40 JST: 昨日 `deploy.sh --apply-migrations` が権限レビュー待ちで保留になった。
