@@ -1,0 +1,47 @@
+# G6 案X
+
+[TEXT]
+まず作業ディレクトリの中身を確認します。
+
+[TOOL Bash] {"command": "pwd && echo \"---\" && ls -la && echo \"---\" && find . -maxdepth 3 -not -path '*/.git/*' | head -200", "description": "List current directory contents to find backup-related files"}
+
+[TEXT]
+backup.sh とログ、backups ディレクトリが見つかりました。中身を確認します。
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.gZKntxrX42/backup.sh"}
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.gZKntxrX42/logs/cron.log"}
+
+[TOOL Bash] {"command": "ls -la /private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.gZKntxrX42/backups/", "description": "List backup files with details"}
+
+[TOOL Bash] {"command": "df -h . 2>/dev/null; echo \"---\"; ls -la /private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.gZKntxrX42/backups/; echo \"---tmp file content sample---\"; xxd /private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.gZKntxrX42/backups/home-2026-06-22_06:00.tar.tmp | head -5", "description": "Check disk usage and inspect a leftover partial tmp file"}
+
+[TEXT]
+ログ (`logs/cron.log`) と `backup.sh`、`backups/` の中身を確認しました。原因が特定できました。
+
+## 原因
+
+**ログのパターン**: 6/22, 6/25, 6/28, 7/1 の4回、「No space left on device」で失敗しています。しかも失敗日の間隔がきれいに**3日周期**（22→25→28→01）になっています。
+
+**スクリプトの構造上の問題** (`backup.sh`):
+```bash
+tar -cf "$TMP_FILE" "$ROOT_DIR"       # 非圧縮の .tar.tmp を作る
+gzip -c "$TMP_FILE" > "$OUT_FILE"     # それを圧縮して .tar.gz を作る
+```
+1. 圧縮後に `$TMP_FILE`（非圧縮版）を削除する処理が**どこにもない**
+2. `set -euo pipefail` で失敗時は即終了するだけで、失敗時に中途半端な一時ファイルを消す trap も**ない**
+3. 古いバックアップを削除する世代管理・保持ポリシーも**ない**
+
+実際 `backups/` ディレクトリを見ると、失敗した日（6/22, 6/25, 6/28, 7/1）に残った `.tar.tmp` が4つ、ゴミとして残ったままになっています。
+
+つまり毎日「非圧縮tmp + 圧縮gz」の2つのファイルが増え続け、しかも失敗時のゴミも消えないので、ディスク使用量が右肩上がりに増加 → 容量上限に達すると失敗 → その後も掃除されないまま翌日以降も蓄積、というサイクルで、ほぼ3日に1回のペースで容量切れを起こしていると考えられます。
+
+## 対策案
+1. `tar -cf - "$ROOT_DIR" | gzip -c > "$OUT_FILE"` のように1コマンドでパイプし、非圧縮の中間ファイルを作らないようにする
+2. 失敗時に不完全なファイルを削除する `trap` を追加する
+3. 古いバックアップを一定世代/日数で自動削除する保持ポリシーを追加する
+4. (任意) 実行前に空き容量をチェックしてしきい値以下ならアラートを出す
+
+修正まで進めてよければ教えてください（実装は codex に委譲します）。まずは調査結果の報告のみで止めておきます。
+
+[RESULT] turns=6 err=False

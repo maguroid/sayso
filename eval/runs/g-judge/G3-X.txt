@@ -1,0 +1,134 @@
+# G3 案X
+
+[TOOL Bash] {"command": "ls -la . && echo \"---\" && find . -iname \"design.md\""}
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/docs/design.md"}
+
+[TEXT]
+M2はMarkdownリンク切れ検出関数 `findBrokenLinks` の実装です。M1の実装状況とプロジェクト構成を確認してから、codexに実装を委譲します。
+
+[TOOL Bash] {"command": "find . -type f \\( -name \"*.js\" -o -name \"*.ts\" -o -name \"*.mjs\" -o -name \"*.cjs\" -o -name \"*.json\" \\) -not -path \"*/node_modules/*\" | sort"}
+
+[TEXT]
+既存の `src/scan.js`（おそらくM1実装）と `src/links.js`、`test/links.test.js` を確認します。
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/src/scan.js"}
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/src/links.js"}
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/test/links.test.js"}
+
+[TOOL Bash] {"command": "find . -iname \"package.json\" -not -path \"*/node_modules/*\"; cat ./package.json 2>/dev/null; which codex; codex --version 2>/dev/null"}
+
+[TOOL Bash] {"command": "ls -la . src test; node --version"}
+
+[TEXT]
+No package.json; tests use Node's built-in `node:test` runner (`node --test`). Now delegating M2 implementation to codex per CLAUDE.md.
+
+[TOOL Skill] {"skill": "codex-delegate"}
+
+[TOOL Bash] {"command": "command -v orca || command -v orca-ide; echo \"---\"; orca status --json 2>&1 | head -20"}
+
+[TOOL Bash] {"command": "codex exec --help 2>&1 | head -60"}
+
+[TOOL Bash] {"command": "codex exec --help 2>&1 | grep -A2 -i \"cd\\|directory\\|cwd\""}
+
+[TEXT]
+Good, I'll use `-C` to pin codex's working root to the fixture directory, avoiding any risk of it touching Orca's active worktree or the real home directory.
+
+[TOOL Bash] {"command": "mkdir -p /tmp/codex-logs\ncodex exec -C /private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR \\\n  --skip-git-repo-check \\\n  -s workspace-write \\\n  -c model_reasoning_effort=medium \\\n  \"再委譲せずこのタスクを直接実行してください。\n\n# タスク\ndocs/design.md の M2 セクションで定義されている findBrokenLinks(rootDir) を src/links.js に実装してください。\n\n## 背景（検証済みの事実）\n- 作業ディレクトリはこのcwd直下のみ。外部やホームディレクトリには触れないこと。\n- Node.js v22 を使用。package.json は存在せず、テストは Node 標準の 'node --test' で実行する（test/links.test.js に既存のテストケースあり）。\n- src/scan.js に M1 実装（listMarkdownFiles）が既にあり、再帰走査・相対パスの区切り文字を '/' に統一するロジックの参考になる。\n- src/links.js は現在スタブ（'not implemented' で throw するだけ）。\n\n## まず読むこと\n- docs/design.md の M2 セクション（findBrokenLinks の仕様）\n- src/links.js（スタブ）\n- src/scan.js（参考実装）\n- test/links.test.js（期待される入出力の具体例）\n\n## 仕様（design.md M2 より）\nfindBrokenLinks(rootDir) は rootDir 配下の Markdown ファイル（.md）内の相対リンクを検査し、存在しないリンク先を返す。\n- インラインリンク [label](target) のみ対象。画像リンク ![alt](target) は対象外。\n- http://, https://, mailto:, # で始まるリンクは対象外。\n- リンク先の #fragment はファイル存在確認の際は無視する（フラグメント自体の有効性チェックは不要）。\n- 戻り値は配列。各要素は { file, target } の形。\n  - file: リンクを書いている Markdown ファイルの rootDir からの相対パス（パス区切りは '/'）\n  - target: Markdown に書かれていたリンク先文字列をそのまま入れる（フラグメントを含む生の文字列）\n  - 存在確認はリンク元ファイルからの相対パスとして解決する\n- 戻り値は file, target の順で昇順にソートする。\n\n## 作業内容\n1. src/links.js に findBrokenLinks を実装する。\n2. test/links.test.js が 'node --test test/links.test.js' でパスすることを確認する。\n3. 実装後、追加でエッジケース（同一ファイル内に複数リンク、リンク先が存在するケースが混在する場合など）が仕様通りに動くか自分でも検証する。\n\n## 制約・禁止事項\n- 変更してよいのは src/links.js のみ。src/scan.js、test/links.test.js、docs/design.md は変更しないこと。\n- git 操作は行わないこと（このディレクトリはgitリポジトリではありません）。\n- 事実を捏造しない。テストが通らない場合は原因を明記すること。\n\n## 完了報告\n- 変更したファイルと差分の要約\n- 'node --test' の実行結果（パス/フェイルの件数）\n- 実装上の設計判断（正規表現の方針など）を簡潔に\n\" < /dev/null > /tmp/codex-logs/m2-links.log 2>&1 &\necho \"started pid $!\""}
+
+[TEXT]
+codexにM2の実装（`findBrokenLinks`）をバックグラウンドで委譲しました。完了したら通知が来るので、その結果を検証してから報告します。
+
+[TOOL Bash] {"command": "wait; echo \"done\"", "run_in_background": true}
+
+[TEXT]
+codexの実装が完了しました。結果を検証します。
+
+[TOOL Bash] {"command": "tail -100 /tmp/codex-logs/m2-links.log"}
+
+[TOOL Bash] {"command": "wc -l /tmp/codex-logs/m2-links.log; ls -la /tmp/codex-logs/m2-links.log; date"}
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/src/links.js"}
+
+[TOOL Bash] {"command": "ps aux | grep -i \"codex exec\" | grep -v grep"}
+
+[TEXT]
+Codexはまだバックグラウンドで動作中です（先ほどの`wait`は別シェルで実行されたため即座に戻っただけでした）。完了まで待ちます。
+
+[TOOL Bash] {"command": "until ! ps -p 66856 > /dev/null 2>&1; do sleep 5; done; echo \"codex process exited\"", "run_in_background": true}
+
+[TOOL ScheduleWakeup] {"delaySeconds": 180, "reason": "codexのM2実装完了をポーリング用バックグラウンドプロセス経由で待機中", "prompt": "design.md の M2 の実装を進めてください"}
+
+[TOOL Bash] {"command": "sleep 1"}
+
+[TEXT]
+Codexの完了通知を待ちます。
+
+[TOOL Bash] {"command": "echo waiting"}
+
+[TEXT]
+codexによるM2実装が完了するまで待機します。バックグラウンドの監視プロセスが完了次第、自動的に通知されます。
+
+[TOOL Bash] {"command": "tail -5 /tmp/codex-logs/m2-links.log 2>/dev/null; echo \"---check---\""}
+
+[TEXT]
+codexが差分を出力し始めています。完了を確認するため、ログ全体とプロセス状態を見ます。
+
+[TOOL Bash] {"command": "ps -p 66856 > /dev/null 2>&1 && echo \"still running\" || echo \"finished\"; wc -l /tmp/codex-logs/m2-links.log"}
+
+[TEXT]
+まだ実行中です。プロセス終了を待つ既存の監視バックグラウンドタスクからの通知を待ちます。
+
+[TOOL Bash] {"command": "echo idle"}
+
+[TOOL Bash] {"command": "true"}
+
+[TEXT]
+codexによるM2実装がバックグラウンドで進行中です（既に`src/links.js`への差分生成が始まっています）。プロセス終了を監視するバックグラウンドタスクから通知が来次第、テスト実行結果と差分を検証してご報告します。
+
+[RESULT] turns=28 err=False
+
+[TEXT]
+codexのプロセスが終了しました。実装内容とテスト結果を検証します。
+
+[TOOL Bash] {"command": "tail -150 /tmp/codex-logs/m2-links.log"}
+
+[TEXT]
+codexが実装を完了しました。自分でも実物のコードを読み、テストを再実行して検証します。
+
+[TOOL Read] {"file_path": "/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/src/links.js"}
+
+[TOOL Bash] {"command": "node --test test/links.test.js 2>&1"}
+
+[TEXT]
+自分でも追加のエッジケースを手早く検証します。
+
+[TOOL Bash] {"command": "cd /tmp && rm -rf links-verify && mkdir links-verify && cd links-verify && mkdir sub && \\\ncat > a.md << 'EOF'\n[good](sub/b.md)\n[bad](sub/missing.md)\n[frag-ok](sub/b.md#section)\n[frag-bad](sub/missing.md#section)\n[mail](mailto:test@example.com)\n[anchor](#local)\n![img](sub/missing.png)\n[ext](https://example.com)\nEOF\ncat > sub/b.md << 'EOF'\n[up-good](../a.md)\n[up-bad](../nope.md)\nEOF\nnode -e \"\nconst { findBrokenLinks } = require('$(pwd | sed 's#/tmp/links-verify#/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR#')/src/links');\n\" 2>&1 || true\nnode -e \"\nconst path = require('path');\nconst { findBrokenLinks } = require('/private/var/folders/3q/yfgl06x57cb0qmt1n1fk6zmr0000gn/T/tmp.FShCxdeBRR/src/links');\nconsole.log(JSON.stringify(findBrokenLinks('/tmp/links-verify'), null, 2));\n\"\n"}
+
+[TEXT]
+期待通りの結果です。画像リンク・mailto・アンカーリンク・外部URLは除外され、フラグメント付きの壊れたリンクも正しく検出され、`file`→`target`の昇順にソートされています。検証用の一時ファイルを削除します。
+
+[TOOL Bash] {"command": "rm -rf /tmp/links-verify"}
+
+[TOOL Bash] {"command": "md5 -q src/scan.js test/links.test.js docs/design.md 2>/dev/null || md5sum src/scan.js test/links.test.js docs/design.md"}
+
+[TEXT]
+他ファイルは変更されていません（`src/links.js`のみの変更）。M2の実装が完了しました。
+
+**実装内容** (`src/links.js`):
+- `listMarkdownFiles`（M1実装）を再利用してMarkdownファイルを列挙
+- 負の後読み `(?<!!)\[...\]\(...\)` でインラインリンクのみ抽出し画像リンクを除外
+- `http://`, `https://`, `mailto:`, `#` 始まりのリンクを除外
+- リンク先の `#fragment` を除去してからファイル存在確認（リンク元ファイル基準の相対解決）
+- `{ file, target }` を `file`→`target` の順で昇順ソート
+
+**検証結果**:
+- `node --test test/links.test.js` → 1 pass, 0 fail
+- 追加で自作した検証（フラグメント付き壊れリンク、画像/mailto/アンカー/外部URLの除外、複数リンク混在）も仕様通りに動作することを確認
+- `src/scan.js`、`test/links.test.js`、`docs/design.md` は変更なし
+
+次はM3（CLI出力）の実装に進めます。
+
+[RESULT] turns=7 err=False
