@@ -47,7 +47,7 @@ case "$arm_arg" in
 esac
 
 if [[ "$scenario_arg" == "all" ]]; then
-  scenarios=(S1 S2 S3 S4 S5 S6)
+  scenarios=(S1 S2 S3 S4 S5 S6 S7)
 else
   scenarios=("$scenario_arg")
 fi
@@ -67,7 +67,7 @@ run_one() {
   local fixture_dir="$scenario_dir/fixture"
   local prompt_file="$scenario_dir/prompt.txt"
 
-  if [[ ! "$scenario" =~ ^S[1-6]$ || ! -d "$fixture_dir" || ! -f "$prompt_file" ]]; then
+  if [[ ! "$scenario" =~ ^S[1-7]$ || ! -d "$fixture_dir" || ! -f "$prompt_file" ]]; then
     echo "不正なシナリオです: $scenario" >&2
     return 2
   fi
