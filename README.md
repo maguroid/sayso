@@ -2,6 +2,8 @@
 
 Sonnet 5 を Fable 5 級の**メインセッション・オーケストレーター**に引き上げるコンテキストフレームワーク。
 
+> neosonnet は個人プロジェクトです。Anthropic 公式の製品・モデルではありません（"Sonnet" は Anthropic のモデル名です）。
+
 > Fable 5はSonnet 5へのプロンプトが上手 / Sonnet 5は速くて安い / Fable 5はめっちゃ高い
 > → Sonnet 5をFable級に引き上げるコンテキストフレームワークをFable 5に作らせれば無双できる
 > — [出典ポスト](https://x.com/AM921543266/status/2072843539906773434)
@@ -18,12 +20,14 @@ Sonnet 5 を Fable 5 級の**メインセッション・オーケストレータ
 | `docs/design.md` | 設計書。アーキテクチャ、入力ソース、評価設計（コストガードレール含む） |
 | `eval/` | 評価ハーネス（L4）。シナリオ、実行スクリプト、ジャッジルーブリック、実行結果 |
 
+> ⚠️ `eval/run.sh` は Claude Code を `--dangerously-skip-permissions` 付きでヘッドレス実行します。Sonnet の実行課金が発生すること・権限確認をスキップすることを理解した上で実行してください（fixture は一時ディレクトリへコピーされ、各 fixture にカレント配下限定のガードを入れています）。
+
 ## 使い方
 
-**neosonnet は「フレームワーク＋Sonnet 5」を一つの仮想モデルとして扱う名前**。推奨の起動形態はシステムプロンプト注入で、`neosonnet` コマンドとして立ち上げる:
+**neosonnet は「フレームワーク＋Sonnet 5」を一つの仮想モデルとして扱う名前**。前提条件: [Claude Code](https://claude.com/claude-code) CLI がインストール・ログイン済みであること。推奨の起動形態はシステムプロンプト注入で、`neosonnet` コマンドとして立ち上げる:
 
 ```sh
-git clone git@github.com:maguroid/neosonnet.git ~/.neosonnet && ~/.neosonnet/install.sh
+git clone https://github.com/maguroid/neosonnet.git ~/.neosonnet && ~/.neosonnet/install.sh
 ```
 
 インストール後は `neosonnet` で起動する。更新は `neosonnet update`、インストール済みバージョンの確認は `neosonnet version`。

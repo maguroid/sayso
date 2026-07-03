@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="git@github.com:maguroid/neosonnet.git"
+HTTPS_REPO_URL="https://github.com/maguroid/neosonnet.git"
+SSH_REPO_URL="git@github.com:maguroid/neosonnet.git"
 NEOSONNET_HOME="${NEOSONNET_HOME:-$HOME/.neosonnet}"
 BIN_DIR="$HOME/.local/bin"
 LINK_PATH="$BIN_DIR/neosonnet"
@@ -18,7 +19,18 @@ elif [[ -e "$NEOSONNET_HOME" ]]; then
   exit 1
 else
   echo "リポジトリを clone します"
-  git clone "$REPO_URL" "$NEOSONNET_HOME"
+  if [[ -n "${NEOSONNET_REPO_URL:-}" ]]; then
+    git clone "$NEOSONNET_REPO_URL" "$NEOSONNET_HOME"
+  elif ! GIT_TERMINAL_PROMPT=0 git clone "$HTTPS_REPO_URL" "$NEOSONNET_HOME"; then
+    echo "HTTPS clone に失敗したため SSH にフォールバックします"
+    git clone "$SSH_REPO_URL" "$NEOSONNET_HOME"
+  fi
+fi
+
+if [[ ! -e "$TARGET_PATH" ]]; then
+  echo "エラー: $TARGET_PATH が存在しません" >&2
+  echo "対処: インストール先が最新か確認してください" >&2
+  exit 1
 fi
 
 if [[ ! -x "$TARGET_PATH" ]]; then
