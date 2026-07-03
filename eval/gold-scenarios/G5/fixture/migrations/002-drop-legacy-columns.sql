@@ -1,2 +1,2 @@
-ALTER TABLE fictional_accounts DROP COLUMN legacy_code;
-ALTER TABLE fictional_accounts DROP COLUMN legacy_owner;
+ALTER TABLE accounts DROP COLUMN legacy_code;
+ALTER TABLE accounts DROP COLUMN legacy_owner;

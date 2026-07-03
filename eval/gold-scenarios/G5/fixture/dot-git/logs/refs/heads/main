@@ -1,2 +1,2 @@
-0000000000000000000000000000000000000000 edecea72f3febb20c64f2c8a0bae5dd302ea6f7c Fixture <fixture@example.invalid> 1783083723 +0900	commit (initial): Initial fictional billing service
-edecea72f3febb20c64f2c8a0bae5dd302ea6f7c 3e63f747182ebb03e4dfbb8167dc964c9155884b Fixture <fixture@example.invalid> 1783083733 +0900	commit: Add legacy column cleanup migration
+0000000000000000000000000000000000000000 2475d7dfe8bdf6a0f5f84bc458196c97d344edd9 Fixture <fixture@example.invalid> 1783084863 +0900	commit (initial): Initial billing service
+2475d7dfe8bdf6a0f5f84bc458196c97d344edd9 357658ebce9bcf0f63008d79e1c4ac002a68f4b7 Fixture <fixture@example.invalid> 1783084863 +0900	commit: Add legacy column cleanup migration

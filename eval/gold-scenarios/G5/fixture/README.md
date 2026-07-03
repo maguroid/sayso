@@ -1,3 +1,3 @@
-# Fictional Billing Service
+# Billing Service
 
-これは評価用の架空プロジェクトです。
+Small billing account service used for account balance maintenance and release testing.
