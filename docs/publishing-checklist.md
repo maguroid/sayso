@@ -11,7 +11,7 @@
 
 ## 公開時に実施（ユーザー判断含む）
 
-- [ ] **LICENSE の選定・追加** — 推奨: MIT。ユーザーの判断で確定する
+- [x] **LICENSE の選定・追加** — MIT で確定（2026-07-03 ユーザー決定、Copyright (c) 2026 maguroid）
 - [ ] **名称の注記** — README に「neosonnet は個人プロジェクトであり、Anthropic 公式の製品・モデル名ではない」という一文を追加（"Sonnet" はAnthropicのモデル名のため混同回避）
 - [ ] **履歴・Issues の公開可否の最終確認** — コミット履歴・Issue・ジャッジ記録（eval/judgments/）もすべて公開される。開発経緯を「Fableが自分で作って実証した」ストーリーとして公開する方針でよいか確認
 - [ ] **eval の警告記載** — `eval/run.sh` は `--dangerously-skip-permissions` で Claude をヘッドレス実行する。第三者向けに「コスト（Sonnet実行課金）と権限スキップの意味を理解した上で実行すること」を README または eval/ 配下に明記
