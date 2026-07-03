@@ -23,14 +23,16 @@ Sonnet 5 を Fable 5 級の**メインセッション・オーケストレータ
 **neosonnet は「フレームワーク＋Sonnet 5」を一つの仮想モデルとして扱う名前**。推奨の起動形態はシステムプロンプト注入で、`neosonnet` コマンドとして立ち上げる:
 
 ```sh
-# zsh の alias / 関数（chezmoi 管理の zsh 設定に置く）
-alias neosonnet='claude --model claude-sonnet-5 \
-  --append-system-prompt "$(cat ~/ghq/github.com/maguroid/neosonnet/framework/ORCHESTRATOR.md)"'
+git clone git@github.com:maguroid/neosonnet.git ~/.neosonnet && ~/.neosonnet/install.sh
 ```
 
-- 常にリポジトリの最新版を読むため、フレームワークの改訂に追従する
+インストール後は `neosonnet` で起動する。更新は `neosonnet update`、インストール済みバージョンの確認は `neosonnet version`。
+
+- `~/.neosonnet` にフレームワークを設置し、`~/.local/bin/neosonnet` から起動する
+- `NEOSONNET_HOME` と `NEOSONNET_MODEL` で設置先・モデル名を上書きできる
 - Sonnet セッションのみに作用し、Fable セッションを汚さない
 - 特定プロジェクトだけで使う場合は、そのプロジェクトの `CLAUDE.md` から参照・inline してもよい（評価ハーネスで実証済みの形態）。詳細は `docs/design.md` §5
+- 代替: zsh の alias / 関数で `claude --model claude-sonnet-5 --append-system-prompt "$(cat ~/ghq/github.com/maguroid/neosonnet/framework/ORCHESTRATOR.md)"` を定義してもよい
 
 ## 開発の原則
 

@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NEOSONNET_HOME="${NEOSONNET_HOME:-$HOME/.neosonnet}"
+NEOSONNET_MODEL="${NEOSONNET_MODEL:-claude-sonnet-5}"
+ORCHESTRATOR="$NEOSONNET_HOME/framework/ORCHESTRATOR.md"
+
+print_help() {
+  cat <<'EOF'
+neosonnet - ORCHESTRATOR.md を読み込んで Claude を起動するランチャー
+
+使い方:
+  neosonnet [claude の引数...]
+  neosonnet update
+  neosonnet version
+  neosonnet help
+
+サブコマンド:
+  update    インストール先を git pull --ff-only で更新し、更新後の短ハッシュを表示
+  version   インストール済みフレームワークのコミット情報と ORCHESTRATOR.md の1行目を表示
+  help      このヘルプを表示（-h / --help も単独指定時のみ）
+
+環境変数:
+  NEOSONNET_HOME    インストール先（既定: ~/.neosonnet）
+  NEOSONNET_MODEL   Claude に渡すモデル名（既定: claude-sonnet-5）
+  NEOSONNET_DRY_RUN 1 のとき Claude を起動せず、実行予定のコマンドラインを表示
+
+注:
+  help / -h / --help は単独指定時だけ neosonnet が処理します。
+  それ以外の引数はすべて claude へそのまま渡します。
+EOF
+}
+
+print_version() {
+  if [[ ! -d "$NEOSONNET_HOME/.git" ]]; then
+    echo "neosonnet: $NEOSONNET_HOME は git リポジトリではありません" >&2
+    echo "対処: install.sh を実行して neosonnet をインストールしてください" >&2
+    exit 1
+  fi
+  if [[ ! -f "$ORCHESTRATOR" ]]; then
+    echo "neosonnet: $ORCHESTRATOR が見つかりません" >&2
+    echo "対処: install.sh を実行して neosonnet をインストールしてください" >&2
+    exit 1
+  fi
+
+  local commit date title
+  commit="$(git -C "$NEOSONNET_HOME" rev-parse --short HEAD)"
+  date="$(git -C "$NEOSONNET_HOME" log -1 --format=%cs)"
+  IFS= read -r title < "$ORCHESTRATOR"
+
+  echo "neosonnet framework: $commit ($date)"
+  echo "orchestrator: $title"
+  echo "注: これはインストール先（${NEOSONNET_HOME}）の情報です。ghq 側の開発クローンとは別物です。"
+}
+
+run_update() {
+  if [[ ! -d "$NEOSONNET_HOME/.git" ]]; then
+    echo "neosonnet: $NEOSONNET_HOME は git リポジトリではありません" >&2
+    echo "対処: install.sh を実行して neosonnet をインストールしてください" >&2
+    exit 1
+  fi
+
+  git -C "$NEOSONNET_HOME" pull --ff-only
+  local commit
+  commit="$(git -C "$NEOSONNET_HOME" rev-parse --short HEAD)"
+  echo "neosonnet updated: $commit"
+}
+
+check_launch_requirements() {
+  if ! command -v claude >/dev/null 2>&1; then
+    echo "neosonnet: claude コマンドが見つかりません" >&2
+    echo "対処: Claude CLI をインストールし、PATH に追加してください" >&2
+    exit 1
+  fi
+  if [[ ! -f "$ORCHESTRATOR" ]]; then
+    echo "neosonnet: $ORCHESTRATOR が見つかりません" >&2
+    echo "対処: install.sh を実行して neosonnet をインストールしてください" >&2
+    exit 1
+  fi
+}
+
+if [[ "$#" -eq 1 ]]; then
+  case "$1" in
+    help|-h|--help)
+      print_help
+      exit 0
+      ;;
+    version)
+      print_version
+      exit 0
+      ;;
+    update)
+      run_update
+      exit 0
+      ;;
+  esac
+fi
+
+check_launch_requirements
+
+if [[ "${NEOSONNET_DRY_RUN:-}" == "1" ]]; then
+  printf 'claude --model %q --append-system-prompt "$(cat %q)"' "$NEOSONNET_MODEL" "$ORCHESTRATOR"
+  for arg in "$@"; do
+    printf ' %q' "$arg"
+  done
+  printf '\n'
+  exit 0
+fi
+
+exec claude --model "$NEOSONNET_MODEL" --append-system-prompt "$(cat "$ORCHESTRATOR")" "$@"
