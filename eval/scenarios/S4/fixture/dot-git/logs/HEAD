@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 dac3e11da3eec4ea16525c6a79b95fb59ec8b5f3 Eval Fixture <fixture@example.invalid> 1783064687 +0900	commit (initial): Initial eval harness fixture
+dac3e11da3eec4ea16525c6a79b95fb59ec8b5f3 dac3e11da3eec4ea16525c6a79b95fb59ec8b5f3 Eval Fixture <fixture@example.invalid> 1783064690 +0900	checkout: moving from main to feature/eval-harness
+dac3e11da3eec4ea16525c6a79b95fb59ec8b5f3 84828ad21a454ef189251bde3261cce1f9048262 Eval Fixture <fixture@example.invalid> 1783064696 +0900	commit: Record local test log

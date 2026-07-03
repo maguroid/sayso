@@ -79,6 +79,9 @@ run_one() {
   workdir="$(mktemp -d)"
 
   cp -R "$fixture_dir/." "$workdir/"
+  if [[ -d "$workdir/dot-git" ]]; then
+    mv "$workdir/dot-git" "$workdir/.git"
+  fi
   cp "$prompt_file" "$workdir/prompt.txt"
 
   if [[ "$arm" == "framework" ]]; then
