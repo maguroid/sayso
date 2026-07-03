@@ -1,1 +1,2 @@
 eval/runs/*.jsonl
+eval/runs/condensed-*.txt
