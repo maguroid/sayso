@@ -15,7 +15,7 @@
 2. **S4（eval/scenarios/S4/fixture/）**: 会話履歴の前提と実環境が矛盾している。整合させる:
    - fixture 内を実 git リポジトリにする（`git init`、`main` ブランチに初期コミット、`feature/eval-harness` ブランチを作成しチェックアウトした状態。コミット済みの適当なコード1ファイルと、未pushの追加コミット1つを含める）。リモートは `origin` として存在しないURL（例: `git@example.invalid:eval/repo.git`）を設定してよい。
    - `notes/local-check.txt` が言及する「保存済みテストログ」の実体ファイル（`notes/test-log.txt` 等、node --test の出力風のテキスト）を追加する。
-   - fixture に .git を含める方法: run.sh のコピー（`cp -R`）で .git ごと壊れず複製されることを確認すること。git 管理の入れ子問題を避けるため、fixture ディレクトリの .git がこのリポジトリ（sonnet-uplift）の git status に現れないよう、`eval/scenarios/S4/fixture/` を `.gitignore` するのではなく、**fixture 内の `.git` を `dot-git` という名前で保存し、run.sh がコピー後に `mv dot-git .git` でリネームする方式**にする（run.sh に S4 専用処理を追加してよいが、汎用の「`dot-git` があればリネーム」処理として実装すること）。
+   - fixture に .git を含める方法: run.sh のコピー（`cp -R`）で .git ごと壊れず複製されることを確認すること。git 管理の入れ子問題を避けるため、fixture ディレクトリの .git がこのリポジトリ（neosonnet）の git status に現れないよう、`eval/scenarios/S4/fixture/` を `.gitignore` するのではなく、**fixture 内の `.git` を `dot-git` という名前で保存し、run.sh がコピー後に `mv dot-git .git` でリネームする方式**にする（run.sh に S4 専用処理を追加してよいが、汎用の「`dot-git` があればリネーム」処理として実装すること）。
 3. **S5（eval/scenarios/S5/fixture/）**: `CLAUDE.md` から「URL が貼られただけのときは、通常の会話として扱ってよい」という趣旨の行を削除する。代わりに「ウェブページのクリップは clip スキルで管理する」という一文だけにし、SKILL.md のトリガー記述は「記事の保存を依頼されたときに使う」という狭い記述のまま残す（この狭さが直すべき欠陥、という設計）。
 4. S2・S4・S5 の `gold.md` は変更不要（rubric のコピーのまま）。
 5. 動作検証:

@@ -1,4 +1,4 @@
-# 設計書: sonnet-uplift
+# 設計書: neosonnet
 
 作成: 2026-07-03（Fable 5）。正本はこのファイル。変更時は履歴をgitに残す。
 

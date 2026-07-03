@@ -1,4 +1,4 @@
-# sonnet-uplift
+# neosonnet
 
 Sonnet 5 を Fable 5 級の**メインセッション・オーケストレーター**に引き上げるコンテキストフレームワーク。
 
@@ -18,9 +18,19 @@ Sonnet 5 を Fable 5 級の**メインセッション・オーケストレータ
 | `docs/design.md` | 設計書。アーキテクチャ、入力ソース、評価設計（コストガードレール含む） |
 | `eval/` | 評価ハーネス（L4）。シナリオ、実行スクリプト、ジャッジルーブリック、実行結果 |
 
-## 使い方（v0.1）
+## 使い方
 
-`framework/ORCHESTRATOR.md` の内容を、Sonnet 5 で回すプロジェクトの `CLAUDE.md`（またはグローバル `~/.claude/CLAUDE.md`）から参照・inline する。詳細は `docs/design.md` §5。
+**neosonnet は「フレームワーク＋Sonnet 5」を一つの仮想モデルとして扱う名前**。推奨の起動形態はシステムプロンプト注入で、`neosonnet` コマンドとして立ち上げる:
+
+```sh
+# zsh の alias / 関数（chezmoi 管理の zsh 設定に置く）
+alias neosonnet='claude --model claude-sonnet-5 \
+  --append-system-prompt "$(cat ~/ghq/github.com/maguroid/neosonnet/framework/ORCHESTRATOR.md)"'
+```
+
+- 常にリポジトリの最新版を読むため、フレームワークの改訂に追従する
+- Sonnet セッションのみに作用し、Fable セッションを汚さない
+- 特定プロジェクトだけで使う場合は、そのプロジェクトの `CLAUDE.md` から参照・inline してもよい（評価ハーネスで実証済みの形態）。詳細は `docs/design.md` §5
 
 ## 開発の原則
 
