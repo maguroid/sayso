@@ -2,9 +2,10 @@
 
 このリポジトリを public にする前に確認・実施する項目。監査の実施記録も兼ねる。
 
-## 対応済み（2026-07-03 監査）
+## 対応済み（2026-07-03 監査、2026-07-05 再監査）
 
-- [x] **個人情報・秘匿情報の監査**: 実メールアドレスなし、`/Users/<name>` 絶対パスなし、eval fixture のgitコミット身元は架空（`Eval Fixture <fixture@example.invalid>`）、APIキー・トークン類なし。**公開直前に再実施すること**（`grep -rE "メール正規表現" .` ＋ secretlint）。
+- [x] **個人情報・秘匿情報の監査**: 2026-07-03 監査では実メールアドレスなし、`/Users/<name>` 絶対パスなし、eval fixture のgitコミット身元は架空（`Eval Fixture <fixture@example.invalid>`）、APIキー・トークン類なしと判定していたが、2026-07-05 再監査で fixture 内の実メール2件と G5 ジャッジログ内の絶対パス3件が見落としだったことを確認し修正済み。実プロジェクト名・非公開ノート参照も一般化済み。**公開直前に再実施すること**（`grep -rE "メール正規表現" .` ＋ secretlint）。
+- [x] **git履歴スクラブ**: 2026-07-05 に既知の機微文字列を `git-filter-repo --replace-text` で全履歴から置換済み。公開前に `git rev-list --all` + `git grep` で再検証すること。
 - [x] **実行ログの除外**: `eval/runs/` の実行トランスクリプト・圧縮ログを git 管理から除外（.gitignore 済み）。
 - [x] **環境依存の一般化**: ORCHESTRATOR.md から特定ツール名（codex/opus 等）前提の記述を除き、「環境の委譲ルールに従う／委譲手段がなければ自分で行い規律は維持」というフォールバックに変更。
 - [x] **installer の公開対応**: clone URL の HTTPS 化（SSH フォールバック付き）。

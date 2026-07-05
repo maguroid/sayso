@@ -12,7 +12,7 @@
 2. `eval/protocol.md` — 評価と改訂の規律（特に §4 改訂プロトコル・規則予算制）
 3. **バックログ**: `gh issue list --label backlog:framework --state open` — M4 実運用で見つかった問題の記録
 4. 直近の `eval/judgments/`（新しい順に2〜3本で十分）
-5. 必要時のみ: `framework/ORCHESTRATOR.md` 全文、[private-hub] の `notes/[private-notes].md`（プライベート・行動規範の原典）
+5. 必要時のみ: `framework/ORCHESTRATOR.md` 全文、非公開の実セッション行動分析ノート（作者手元、47セッション分。行動規範の原典）
 
 ### セッションの定型フロー
 
