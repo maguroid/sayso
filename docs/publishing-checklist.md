@@ -18,5 +18,5 @@
 - [x] **eval の警告記載** — README の構成表直下に追加済み（課金・権限スキップの明示）
 - [x] **README の前提条件** — Claude Code CLI のインストール・ログイン前提を使い方に明記済み
 - [ ] **リポジトリ整備** — description / topics 設定、必要なら英語 README（任意）
-- [ ] **curl ワンライナー** — 公開後は `curl -fsSL https://raw.githubusercontent.com/maguroid/neosonnet/main/install.sh | sh` を README に追記可能（公開前は動かないため公開後に）
-- [ ] **可視性変更**: `gh repo edit maguroid/neosonnet --visibility public`
+- [ ] **curl ワンライナー** — 公開後は `curl -fsSL https://raw.githubusercontent.com/maguroid/sayso/main/install.sh | sh` を README に追記可能（公開前は動かないため公開後に）
+- [ ] **可視性変更**: `gh repo edit maguroid/sayso --visibility public`

@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-HTTPS_REPO_URL="https://github.com/maguroid/neosonnet.git"
-SSH_REPO_URL="git@github.com:maguroid/neosonnet.git"
-NEOSONNET_HOME="${NEOSONNET_HOME:-$HOME/.neosonnet}"
+HTTPS_REPO_URL="https://github.com/maguroid/sayso.git"
+SSH_REPO_URL="git@github.com:maguroid/sayso.git"
+SAYSO_HOME="${SAYSO_HOME:-$HOME/.sayso}"
 BIN_DIR="$HOME/.local/bin"
-LINK_PATH="$BIN_DIR/neosonnet"
-TARGET_PATH="$NEOSONNET_HOME/bin/neosonnet"
+LINK_PATH="$BIN_DIR/sayso"
+TARGET_PATH="$SAYSO_HOME/bin/sayso"
 
-echo "neosonnet を $NEOSONNET_HOME にセットアップします"
+echo "sayso を $SAYSO_HOME にセットアップします"
 
-if [[ -d "$NEOSONNET_HOME/.git" ]]; then
+if [[ -d "$SAYSO_HOME/.git" ]]; then
   echo "既存のインストール先を更新します"
-  git -C "$NEOSONNET_HOME" pull --ff-only
-elif [[ -e "$NEOSONNET_HOME" ]]; then
-  echo "エラー: $NEOSONNET_HOME は存在しますが git リポジトリではありません" >&2
-  echo "対処: 退避または削除してから再実行するか、NEOSONNET_HOME で別の場所を指定してください" >&2
+  git -C "$SAYSO_HOME" pull --ff-only
+elif [[ -e "$SAYSO_HOME" ]]; then
+  echo "エラー: $SAYSO_HOME は存在しますが git リポジトリではありません" >&2
+  echo "対処: 退避または削除してから再実行するか、SAYSO_HOME で別の場所を指定してください" >&2
   exit 1
 else
   echo "リポジトリを clone します"
-  if [[ -n "${NEOSONNET_REPO_URL:-}" ]]; then
-    git clone "$NEOSONNET_REPO_URL" "$NEOSONNET_HOME"
-  elif ! GIT_TERMINAL_PROMPT=0 git clone "$HTTPS_REPO_URL" "$NEOSONNET_HOME"; then
+  if [[ -n "${SAYSO_REPO_URL:-}" ]]; then
+    git clone "$SAYSO_REPO_URL" "$SAYSO_HOME"
+  elif ! GIT_TERMINAL_PROMPT=0 git clone "$HTTPS_REPO_URL" "$SAYSO_HOME"; then
     echo "HTTPS clone に失敗したため SSH にフォールバックします"
-    git clone "$SSH_REPO_URL" "$NEOSONNET_HOME"
+    git clone "$SSH_REPO_URL" "$SAYSO_HOME"
   fi
 fi
 
@@ -60,9 +60,9 @@ else
 fi
 
 echo
-NEOSONNET_HOME="$NEOSONNET_HOME" "$TARGET_PATH" version
+SAYSO_HOME="$SAYSO_HOME" "$TARGET_PATH" version
 echo
-echo "起動: neosonnet"
+echo "起動: sayso"
 
 case ":$PATH:" in
   *":$BIN_DIR:"*) ;;
